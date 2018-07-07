@@ -3,6 +3,7 @@ package net;
 import java.io.*;
 import java.net.Socket;
 
+//TODO: Клиент тестовый, ничего особого
 public class Client {
     private final int port;
     private final String address;

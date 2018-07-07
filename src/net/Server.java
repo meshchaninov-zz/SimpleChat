@@ -22,6 +22,7 @@ public class Server {
             @Override
             public void run() {
                 try {
+                    //TODO: реализовать норм выход из цикла
                     while(true) {
                         System.out.println("Wait user");
                         Socket newSocket = serverSocket.accept();
@@ -29,7 +30,6 @@ public class Server {
                         (new User(newSocket, messageEngine)).start();
                     }
                 } catch (IOException e) {
-                    System.out.println("OOOPS!");
                     e.printStackTrace();
                 }
             }
