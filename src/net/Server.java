@@ -7,9 +7,7 @@ import java.net.Socket;
 public class Server {
     private final int PORT;
     private final ServerSocket serverSocket;
-    private Socket newUser;
-    private DataInputStream input;
-    private DataOutputStream output;
+    private MessageEngine messageEngine = new MessageEngine();
 
     public Server(int PORT) throws IOException {
         this.PORT = PORT;
@@ -19,32 +17,16 @@ public class Server {
 
     public void accept() throws IOException {
         System.out.println("Wait for user...");
-        newUser = serverSocket.accept();
+        User user = new User(serverSocket.accept(), messageEngine);
+        User user1 = new User(serverSocket.accept(), messageEngine);
         System.out.println("Connection accepted");
-        InputStream inputStream = newUser.getInputStream();
-        OutputStream outputStream = newUser.getOutputStream();
-        input = new DataInputStream(inputStream);
-        output = new DataOutputStream(outputStream);
+        user.run();
+        user1.run();
         loop();
     }
 
     private void loop() throws IOException {
-        try {
-            while (newUser.isConnected()) {
-                String s = null;
-                s = input.readUTF();
-                System.out.println(s);
-                output.writeUTF("Hey " + s);
-                output.flush();
-            }
-        } catch (IOException e) {
-            System.out.println("Connection refused");
-        } finally {
-            input.close();
-            output.close();
-            newUser.close();
-            serverSocket.close();
-        }
+
     }
 
     public static void main(String[] args) throws IOException {
