@@ -23,16 +23,33 @@ public class Client {
     }
 
     private void loop() throws Exception {
-        String cl, ser;
-        do {
-            cl = bin.readLine();
-            System.out.println("Send: " + cl);
-            out.writeUTF(cl);
-            out.flush();
-            ser = in.readUTF();
-            System.out.println("Server send me: " + ser);
-        } while (cl != "exit");
-        exit();
+        Thread pull = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        System.out.println("Server write: " + in.readUTF());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        pull.start();
+        Thread push = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        out.writeUTF(bin.readLine());
+                        out.flush();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        push.start();
 
     }
 
