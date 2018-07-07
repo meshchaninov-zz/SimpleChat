@@ -3,6 +3,8 @@ package net;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
     private final int PORT;
@@ -16,22 +18,33 @@ public class Server {
     }
 
     public void accept() throws IOException {
-        System.out.println("Wait for user...");
-        User user = new User(serverSocket.accept(), messageEngine);
-        User user1 = new User(serverSocket.accept(), messageEngine);
-        System.out.println("Connection accepted");
-        user.run();
-        user1.run();
-        loop();
+        Thread acceptThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while(true) {
+                        System.out.println("Wait user");
+                        Socket newSocket = serverSocket.accept();
+                        System.out.println("socket accept");
+                        (new User(newSocket, messageEngine)).start();
+                    }
+                } catch (IOException e) {
+                    System.out.println("OOOPS!");
+                    e.printStackTrace();
+                }
+            }
+        });
+        acceptThread.start();
     }
 
     private void loop() throws IOException {
+        accept();
 
     }
 
     public static void main(String[] args) throws IOException {
         Server s = new Server(8888);
-        s.accept();
+        s.loop();
     }
 
 

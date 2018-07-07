@@ -48,7 +48,16 @@ public class User extends Thread implements Sender {
     }
 
     private void logic() {
-        engine.sending(this, getUserID() + " Hello!");
+        try {
+            do {
+                System.out.println("read from user " + getUserID());
+                String line = read();
+                System.out.println("user " + getUserID() + " write: " + line);
+                engine.sending(this, line);
+            } while (!engine.isStop());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void firstHandShake() throws IOException {
